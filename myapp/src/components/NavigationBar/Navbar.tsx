@@ -1,7 +1,6 @@
-"use client";
-
 import React from 'react';
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, useMediaQuery } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,7 +26,7 @@ type Props = {
 
 export type Navbar1Props = React.ComponentPropsWithoutRef<"section"> & Partial<Props>;
 
-export const Navbar1 = (props: Navbar1Props) => {
+export const Navbar = (props: Navbar1Props) => {
   const { logo, navLinks, buttons } = {
     ...Navbar1Defaults,
     ...props,
@@ -37,12 +36,12 @@ export const Navbar1 = (props: Navbar1Props) => {
   const isMobile = useMediaQuery("(max-width: 991px)");
 
   return (
-    <nav className="flex w-full items-center border-b border-border-primary bg-background-primary lg:min-h-18 lg:px-[5%]">
+    <nav className="flex w-full items-center border-bx border-border-primary bg-background-primary lg:min-h-18 lg:px-[5%]">
       <div className="size-full lg:flex lg:items-center lg:justify-between">
         <div className="flex min-h-16 items-center justify-between px-[5%] md:min-h-18 lg:min-h-full lg:px-0">
-          <a href={logo.url}>
+          <Link to={'/'}>
             <img src={logo.src} alt={logo.alt} />
-          </a>
+          </Link>
           <button
             className="-mr-2 flex size-12 flex-col items-center justify-center lg:hidden"
             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
@@ -84,12 +83,12 @@ export const Navbar1 = (props: Navbar1Props) => {
               {navLink.subMenuLinks && navLink.subMenuLinks.length > 0 ? (
                 <SubMenu navLink={navLink} isMobile={isMobile} />
               ) : (
-                <a
-                  href={navLink.url}
+                <Link
+                  to={navLink.url}
                   className="block py-3 text-md focus-visible:outline-none lg:px-4 lg:py-2 lg:text-base"
                 >
                   {navLink.title}
-                </a>
+                </Link>
               )}
             </div>
           ))}
@@ -151,14 +150,14 @@ const SubMenu = ({ navLink, isMobile }: { navLink: NavLink; isMobile: boolean })
             transition={{ duration: 0.2 }}
             className="bg-background-primary lg:absolute lg:z-50 lg:border lg:border-border-primary lg:p-2 lg:[--y-close:25%]"
           >
-            {navLink.subMenuLinks?.map((navLink, index) => (
-              <a
+            {navLink.subMenuLinks?.map((subNavLink, index) => (
+              <Link
                 key={index}
-                href={navLink.url}
+                to={subNavLink.url}
                 className="block py-3 pl-[5%] text-md focus-visible:outline-none lg:px-4 lg:py-2 lg:text-base"
               >
-                {navLink.title}
-              </a>
+                {subNavLink.title}
+              </Link>
             ))}
           </motion.nav>
         </AnimatePresence>
@@ -174,9 +173,9 @@ export const Navbar1Defaults: Navbar1Props = {
     alt: "Logo image",
   },
   navLinks: [
-    { title: "Link One", url: "#" },
+    { title: "Link One", url: "/" },
     { title: "Link Two", url: "#" },
-    { title: "Link Three", url: "#" },
+    { title: "Link Three", url: "/fours" },
     {
       title: "Link Four",
       url: "#",
@@ -243,4 +242,4 @@ const bottomLineVariants = {
   },
 };
 
-Navbar1.displayName = "Navbar1";
+Navbar.displayName = "Navbar1";
