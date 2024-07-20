@@ -36,7 +36,7 @@ export const Navbar = (props: Navbar1Props) => {
   const isMobile = useMediaQuery("(max-width: 991px)");
 
   return (
-    <nav className="flex w-full items-center border-bx border-border-primary bg-background-primary lg:min-h-18 lg:px-[5%]">
+    <nav className="flex w-full items-center md:fixed border-bx border-border-primary bg-background-primary lg:min-h-18 lg:px-[5%]">
       <div className="size-full lg:flex lg:items-center lg:justify-between">
         <div className="flex min-h-16 items-center justify-between px-[5%] md:min-h-18 lg:min-h-full lg:px-0">
           <Link to={'/'}>
@@ -173,9 +173,9 @@ export const Navbar1Defaults: Navbar1Props = {
     alt: "Logo image",
   },
   navLinks: [
-    { title: "Link One", url: "/" },
+    { title: "Link One", url: "/test2" },
     { title: "Link Two", url: "#" },
-    { title: "Link Three", url: "/fours" },
+    { title: "Link Three", url: "/test" },
     {
       title: "Link Four",
       url: "#",
