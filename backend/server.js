@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 dotenv.config();
 import connect from './database/conn.js';
-// import router from './router/route.js';
+import authRoute from './routes/authRoutes.js'; 
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 
 /** api routes */
-// app.use('/api', router)
+app.use('/api', authRoute)
 
 /** start server only when we have valid connection */
 connect().then(() => {
