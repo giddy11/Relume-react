@@ -1,8 +1,23 @@
 import UserModel from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-// import ENV from '../config.js'
 import otpGenerator from "otp-generator";
+
+/** middleware for verify user */
+export async function verifyUser(req, res, next){
+  try {
+      
+      const { username } = req.method == "GET" ? req.query : req.body;
+
+      // check the user existance
+      let exist = await UserModel.findOne({ username });
+      if(!exist) return res.status(404).send({ error : "Can't find User!"});
+      next();
+
+  } catch (error) {
+      return res.status(404).send({ error: "Authentication Error"});
+  }
+}
 
 /** POST: http://localhost:8080/api/register 
  * @param : {
@@ -80,7 +95,7 @@ export async function login(req, res) {
           .compare(password, user.password)
           .then((passwordCheck) => {
             if (!passwordCheck)
-              return res.status(400).send({ error: "Don't have Password" });
+              return res.status(400).send({ error: "Invalid Password" });
 
             // create jwt token
             const token = jwt.sign(
@@ -88,7 +103,7 @@ export async function login(req, res) {
                 userId: user._id,
                 username: user.username,
               },
-              ENV.JWT_SECRET,
+              process.env.ACCESS_TOKEN_SECRET,
               { expiresIn: "24h" }
             );
 
@@ -115,21 +130,29 @@ export async function getUser(req, res) {
   const { username } = req.params;
 
   try {
-    if (!username) return res.status(501).send({ error: "Invalid Username" });
+    if (!username) {
+      console.error("Invalid Username");
+      return res.status(400).send({ error: "Invalid Username" });
+    }
 
-    UserModel.findOne({ username }, function (err, user) {
-      if (err) return res.status(500).send({ err });
-      if (!user)
-        return res.status(501).send({ error: "Couldn't Find the User" });
+    console.log(`Searching for user with username: ${username}`);
+    
+    const user = await UserModel.findOne({ username }).exec();
 
-      /** remove password from user */
-      // mongoose return unnecessary data with object so convert it into json
-      const { password, ...rest } = Object.assign({}, user.toJSON());
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send({ error: "Couldn't Find the User" });
+    }
 
-      return res.status(201).send(rest);
-    });
+    /** remove password from user */
+    const { password, ...rest } = user.toObject();
+
+    console.log("User found:", rest);
+    return res.status(200).send(rest);
+
   } catch (error) {
-    return res.status(404).send({ error: "Cannot Find User Data" });
+    console.error("Unexpected error:", error);
+    return res.status(500).send({ error: "Cannot Find User Data" });
   }
 }
 
