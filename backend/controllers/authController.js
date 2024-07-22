@@ -168,23 +168,26 @@ body: {
 */
 export async function updateUser(req, res) {
   try {
-    // const id = req.query.id;
     const { userId } = req.user;
 
-    if (userId) {
-      const body = req.body;
-
-      // update the data
-      UserModel.updateOne({ _id: userId }, body, function (err, data) {
-        if (err) throw err;
-
-        return res.status(201).send({ msg: "Record Updated...!" });
-      });
-    } else {
+    if (!userId) {
       return res.status(401).send({ error: "User Not Found...!" });
     }
+
+    const body = req.body;
+
+    // Update the data
+    const result = await UserModel.updateOne({ _id: userId }, body).exec();
+
+    if (result.nModified === 0) {
+      return res.status(404).send({ error: "No records were updated. User might not exist or no changes were made." });
+    }
+
+    return res.status(200).send({ msg: "Record Updated...!" });
+
   } catch (error) {
-    return res.status(401).send({ error });
+    console.error("Error updating user:", error);
+    return res.status(500).send({ error: "An error occurred while updating the record." });
   }
 }
 
