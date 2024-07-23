@@ -35,9 +35,9 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Homepage />} />
+          {/* <Route path="/" element={<Homepage />} /> */}
           <Route path="/test" element={<Test />} />
-          <Route path="/username" element={<Username />} />
+          <Route path="/" element={<Username />} />
           <Route path="/register" element={<Register />} />
           <Route path="/password" element={<Password />} />
           <Route path="/recovery" element={<Recovery />} />

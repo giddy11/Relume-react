@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -10,7 +11,16 @@ const app = express();
 
 /** middlewares */
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Replace with your frontend URL
+    optionsSuccessStatus: 200
+}));
+
+// Body parser middleware with increased payload limit
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 app.use(morgan('tiny'));
 app.disable('x-powered-by'); // less hackers know about our stack
 
