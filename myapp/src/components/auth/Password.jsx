@@ -1,12 +1,12 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import avatar from '../../assets/profile.png';
 import toast, { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
-import { passwordValidate } from '../../helper/validate'
+import { passwordValidate } from '../../helper/validate';
 import useFetch from '../../hooks/fetchHook';
-import { useAuthStore } from '../../store/store'
-import { verifyPassword } from '../../helper/helper'
+import { useAuthStore } from '../../store/store';
+import { verifyPassword } from '../../helper/helper';
 import styles from '../../styles/Username.module.css';
 
 export default function Password() {
@@ -23,18 +23,30 @@ export default function Password() {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async values => {
-      let loginPromise = verifyPassword({ username, password: values.password });
-      toast.promise(loginPromise, {
-        loading: 'Checking...',
-        success: <b>Login Successfully...!</b>,
-        error: <b>Password Not Match!</b>
-      });
+      try {
+        const loginPromise = verifyPassword({ username, password: values.password });
+        toast.promise(loginPromise, {
+          loading: 'Checking...',
+          success: <b>Login Successfully...!</b>,
+          error: err => {
+            console.error(err);
+            return <b>{err.error || 'Password Not Match!'}</b>;
+          }
+        });
 
-      loginPromise.then(res => {
-        let { token } = res.data;
-        localStorage.setItem('token', token);
-        navigate('/profile');
-      });
+        loginPromise
+          .then(res => {
+            const { token } = res.data;
+            localStorage.setItem('token', token);
+            navigate('/profile');
+          })
+          .catch(err => {
+            console.error('Error during login:', err);
+          });
+      } catch (error) {
+        toast.error('An error occurred during login.');
+        console.error('Unexpected error:', error);
+      }
     }
   });
 
@@ -45,7 +57,7 @@ export default function Password() {
     <div className="container mx-auto">
       <Toaster position='top-center' reverseOrder={false}></Toaster>
 
-      <div className='flex justify-center items-center h-screen'>
+      <div className='flex justify-center items-center h-screenx'>
         <div className={styles.glass}>
           <div className="title flex flex-col items-center">
             <h4 className='text-5xl font-bold'>Hello {apiData?.firstName || apiData?.username}</h4>

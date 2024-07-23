@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Test from './Test';
 import './App.css';
-import { Navbar } from './components/NavigationBar/Navbar';
+import { Navbar } from './components/navigationBar/Navbar';
 import { Footer } from './components/footer/Footer';
-import Homepage from './pages/Homepage/Homepage';
+// import Homepage from './pages/Homepage/Homepage';
 import Username from './components/auth/Username';
 import Register from './components/auth/Register';
 import Password from './components/auth/Password';
@@ -12,6 +12,8 @@ import Recovery from './components/auth/Recovery';
 import Reset from './components/auth/Reset';
 import Profile from './pages/Profile';
 import PageNotFound from './pages/edgeCases/PageNotFound';
+/** auth middleware */
+import { AuthorizeUser, ProtectRoute } from './middleware/auth'
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -31,6 +33,7 @@ const Layout = ({ children }) => {
 };
 
 function App() {
+  
   return (
     <Router>
       <Layout>
@@ -39,10 +42,10 @@ function App() {
           <Route path="/test" element={<Test />} />
           <Route path="/" element={<Username />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/password" element={<Password />} />
+          <Route path="/password" element={<ProtectRoute><Password /></ProtectRoute>} />
           <Route path="/recovery" element={<Recovery />} />
           <Route path="/reset" element={<Reset />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<AuthorizeUser><Profile /></AuthorizeUser>} />
           <Route path="*" element={<PageNotFound />} />
           {/* Add other routes here */}
         </Routes>

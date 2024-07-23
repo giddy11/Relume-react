@@ -1,14 +1,13 @@
 import nodemailer from 'nodemailer';
 import Mailgen from 'mailgen';
-
 import dotenv from 'dotenv';
-dotenv.config(); // Load environment variables from .env file
 
+dotenv.config(); // Load environment variables from .env file
 
 // Configure Nodemailer
 const nodeConfig = {
-    host: "smtp.ethereal.email",
-    port: 587,
+    host: "smtp.ethereal.email", // Use environment variable or default to Ethereal
+    port:  587, // Use environment variable or default to 587
     secure: false, // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL, // generated ethereal user
@@ -17,6 +16,15 @@ const nodeConfig = {
 };
 
 const transporter = nodemailer.createTransport(nodeConfig);
+
+// Verify the transporter configuration
+transporter.verify(function(error, success) {
+    if (error) {
+        console.log("SMTP configuration error:", error);
+    } else {
+        console.log("SMTP server is ready to take our messages");
+    }
+});
 
 // Configure Mailgen
 const MailGenerator = new Mailgen({
@@ -36,6 +44,7 @@ const MailGenerator = new Mailgen({
 }
  */
 export const registerMail = async (req, res) => {
+    
     const { username, userEmail, text, subject } = req.body;
 
     // Body of the email
