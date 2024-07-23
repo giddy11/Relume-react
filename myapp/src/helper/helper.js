@@ -1,5 +1,6 @@
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // This is not correct, correct approach is below
+
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_DOMAIN;
 
@@ -8,12 +9,12 @@ axios.defaults.baseURL = process.env.REACT_APP_SERVER_DOMAIN;
 
 
 /** To get username from Token */
-// export async function getUsername(){
-//     const token = localStorage.getItem('token')
-//     if(!token) return Promise.reject("Cannot find Token");
-//     let decode = jwt_decode(token)
-//     return decode;
-// }
+export async function getUsername(){
+    const token = localStorage.getItem('token')
+    if(!token) return Promise.reject("Cannot find Token");
+    let decode = jwtDecode(token)
+    return decode;
+}
 
 /** authenticate function */
 export async function authenticate(username){
