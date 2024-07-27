@@ -149,13 +149,16 @@ const Header = () => {
           </div> */}
 
           <div>
-            <button
+            <Link
+              to={"/login"}
               className="px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700"
             >
+              Login
+            </Link>
+            <button className="px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700">
               Logout
             </button>
           </div>
-
         </div>
       </div>
     </header>
