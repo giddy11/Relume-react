@@ -3,7 +3,7 @@ import loginIcons from '../assest/signin.gif';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import imageTobase64 from '../helper/imageTobase64';
-// import SummaryApi from '../common';
+import SummaryApi from '../common';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
@@ -13,9 +13,9 @@ const SignUp = () => {
   const [data, setData] = useState({
     email: "",
     password: "",
-    name: "",
+    username: "",
     confirmPassword: "",
-    profilePic: "",
+    profile: "",
   });
   const navigate = useNavigate();
 
@@ -40,37 +40,38 @@ const SignUp = () => {
 
       setData((prev) => ({
         ...prev,
-        profilePic: imagePic
+        role:"GENERAL",
+        profile: imagePic
       }));
     }
   };
 
   const handleSubmit = async (e) => {
     console.log("clicked")
-    // e.preventDefault();
+    e.preventDefault();
 
-    // if (data.password === data.confirmPassword) {
-    //   try {
-    //     const response = await axios.post(SummaryApi.signUP.url, data, {
-    //       headers: {
-    //         "Content-Type": "application/json"
-    //       }
-    //     });
+    if (data.password === data.confirmPassword) {
+      try {
+        const response = await axios.post(SummaryApi.signUP.url, data, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
 
-    //     const dataApi = response.data;
+        const dataApi = response.data;
 
-    //     if (dataApi.success) {
-    //       toast.success(dataApi.message);
-    //       navigate("/login");
-    //     } else if (dataApi.error) {
-    //       toast.error(dataApi.message);
-    //     }
-    //   } catch (error) {
-    //     toast.error("An error occurred while signing up");
-    //   }
-    // } else {
-    //   toast.error("Please check password and confirm password");
-    // }
+        if (dataApi.success) {
+          toast.success(dataApi.message);
+          navigate("/login");
+        } else if (dataApi.error) {
+          toast.error(dataApi.message);
+        }
+      } catch (error) {
+        toast.error("An error occurred while signing up");
+      }
+    } else {
+      toast.error("Please check password and confirm password");
+    }
   };
 
   return (
@@ -79,7 +80,7 @@ const SignUp = () => {
         <div className='bg-white p-5 w-full max-w-sm mx-auto'>
           <div className='w-20 h-20 mx-auto relative overflow-hidden rounded-full'>
             <div>
-              <img src={data.profilePic || loginIcons} alt='login icons' />
+              <img src={data.profile || loginIcons} alt='login icons' />
             </div>
             <form>
               <label>
@@ -98,8 +99,8 @@ const SignUp = () => {
                 <input
                   type='text'
                   placeholder='enter your name'
-                  name='name'
-                  value={data.name}
+                  name='username'
+                  value={data.username}
                   onChange={handleOnChange}
                   required
                   className='w-full h-full outline-none bg-transparent'

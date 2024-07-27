@@ -4,18 +4,16 @@ import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
 
 /** middleware for verify user */
-export async function verifyUser(req, res, next){
+export async function verifyUser(req, res, next) {
   try {
-      
-      const { username } = req.method == "GET" ? req.query : req.body;
+    const { username } = req.method == "GET" ? req.query : req.body;
 
-      // check the user existance
-      let exist = await UserModel.findOne({ username });
-      if(!exist) return res.status(404).send({ error : "Can't find User!"});
-      next();
-
+    // check the user existance
+    let exist = await UserModel.findOne({ username });
+    if (!exist) return res.status(404).send({ error: "Can't find User!" });
+    next();
   } catch (error) {
-      return res.status(404).send({ error: "Authentication Error"});
+    return res.status(404).send({ error: "Authentication Error" });
   }
 }
 
@@ -33,10 +31,20 @@ export async function verifyUser(req, res, next){
 */
 export async function register(req, res) {
   try {
-    const { username, password, profile, email } = req.body;
+    const { username: name, password, profile, email } = req.body;
+
+    if (!email) {
+      throw new Error("Please provide email");
+    }
+    if (!password) {
+      throw new Error("Please provide password");
+    }
+    if (!name) {
+      throw new Error("Please provide name");
+    }
 
     // Check for existing username
-    const existUsername = UserModel.findOne({ username }).exec();
+    const existUsername = UserModel.findOne({ username: name }).exec();
     const existEmail = UserModel.findOne({ email }).exec();
 
     const [usernameExists, emailExists] = await Promise.all([
@@ -45,7 +53,8 @@ export async function register(req, res) {
     ]);
 
     if (usernameExists) {
-      return res.status(400).json({ error: "Please use unique username" });
+      throw new Error("Please use unique username");
+      // return res.status(400).json({ error: "Please use unique username" });
     }
 
     if (emailExists) {
@@ -54,14 +63,24 @@ export async function register(req, res) {
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
+    if (!hashedPassword) {
+      throw new Error("Something is wrong");
+    }
+
+    const payload = {
+      ...req.body,
+      password: hashedPassword,
+    };
 
     // Create a new user
-    const user = new UserModel({
-      username,
-      password: hashedPassword,
-      profile: profile || "",
-      email,
-    });
+    // const user = new UserModel({
+    //   username: name,
+    //   password: hashedPassword,
+    //   profile: profile || "",
+    //   email,
+    // });
+
+    const user = new UserModel(payload);
 
     // Save the user
     const result = await user.save();
@@ -69,13 +88,23 @@ export async function register(req, res) {
     const userResponse = result.toObject();
     delete userResponse.password;
 
-
-    return res
-      .status(201)
-      .send({ msg: "User Registered Successfully", user: userResponse });
+    // return res
+    //   .status(201)
+    //   .send({ msg: "User Registered Successfully", user: userResponse });
+    res.status(201).json({
+      data: result,
+      success: true,
+      error: false,
+      message: "User created Successfully",
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ error: "Internal Server Error" });
+    // return res.status(500).send({ error: "Internal Server Error" });
+    res.json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
   }
 }
 
@@ -86,42 +115,58 @@ export async function register(req, res) {
 }
 */
 export async function login(req, res) {
-  const { username, password } = req.body;
-
   try {
-    UserModel.findOne({ username })
-      .then((user) => {
-        bcrypt
-          .compare(password, user.password)
-          .then((passwordCheck) => {
-            if (!passwordCheck)
-              return res.status(400).send({ error: "Invalid Password" });
+    const { email, password } = req.body;
 
-            // create jwt token
-            const token = jwt.sign(
-              {
-                userId: user._id,
-                username: user.username,
-              },
-              process.env.ACCESS_TOKEN_SECRET,
-              { expiresIn: "24h" }
-            );
+    if (!email) {
+      throw new Error("Please provide email");
+    }
+    if (!password) {
+      throw new Error("Please provide password");
+    }
 
-            return res.status(200).send({
-              msg: "Login Successful...!",
-              username: user.username,
-              token,
-            });
-          })
-          .catch((error) => {
-            return res.status(400).send({ error: "Password does not Match" });
-          });
-      })
-      .catch((error) => {
-        return res.status(404).send({ error: "Username not Found" });
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const checkPassword = await bcrypt.compare(password, user.password);
+
+    console.log("checkPassword", checkPassword);
+
+    if (checkPassword) {
+      const tokenData = {
+        _id: user._id,
+        email: user.email,
+      };
+      // const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: 60 * 60 * 8 });
+      const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
+        expiresIn: 10,
       });
+
+      const tokenOption = {
+        httpOnly: true, // The cookie is inaccessible to JavaScript, mitigating XSS attacks
+        secure: true,   // The cookie is sent only over HTTPS, ensuring secure transmission
+      };
+      
+
+      res.cookie("token", token, tokenOption).status(200).json({
+        message: "Login successfully",
+        data: token,
+        success: true,
+        error: false,
+      });
+    } else {
+      throw new Error("Please check Password");
+    }
   } catch (error) {
-    return res.status(500).send({ error });
+    // return res.status(500).send({ error });
+    res.json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
   }
 }
 
@@ -136,7 +181,7 @@ export async function getUser(req, res) {
     }
 
     console.log(`Searching for user with username: ${username}`);
-    
+
     const user = await UserModel.findOne({ username }).exec();
 
     if (!user) {
@@ -149,7 +194,6 @@ export async function getUser(req, res) {
 
     console.log("User found:", rest);
     return res.status(200).send(rest);
-
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).send({ error: "Cannot Find User Data" });
@@ -180,14 +224,18 @@ export async function updateUser(req, res) {
     const result = await UserModel.updateOne({ _id: userId }, body).exec();
 
     if (result.nModified === 0) {
-      return res.status(404).send({ error: "No records were updated. User might not exist or no changes were made." });
+      return res.status(404).send({
+        error:
+          "No records were updated. User might not exist or no changes were made.",
+      });
     }
 
     return res.status(200).send({ msg: "Record Updated...!" });
-
   } catch (error) {
     console.error("Error updating user:", error);
-    return res.status(500).send({ error: "An error occurred while updating the record." });
+    return res
+      .status(500)
+      .send({ error: "An error occurred while updating the record." });
   }
 }
 
@@ -255,6 +303,8 @@ export async function resetPassword(req, res) {
     return res.status(200).send({ msg: "Record Updated...!" });
   } catch (error) {
     console.error("Error resetting password:", error);
-    return res.status(500).send({ error: "An error occurred while resetting the password." });
+    return res
+      .status(500)
+      .send({ error: "An error occurred while resetting the password." });
   }
 }
