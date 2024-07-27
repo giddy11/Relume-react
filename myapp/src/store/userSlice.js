@@ -10,6 +10,7 @@ const initialState = {
     initialState,
     reducers: {
       setUserDetails : (state,action)=>{
+        console.log("from userslice: ", action.payload)
         state.user = action.payload
       }
     },

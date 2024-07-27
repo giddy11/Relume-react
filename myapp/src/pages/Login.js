@@ -11,8 +11,8 @@ import axios from "axios";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
-    email: "",
-    password: "",
+    email: "giddy@test.com",
+    password: "giddy",
   });
   const navigate = useNavigate();
   // const { fetchUserDetails, fetchUserAddToCart } = useContext(Context)

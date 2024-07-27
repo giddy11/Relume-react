@@ -4,7 +4,7 @@ import { GrSearch } from "react-icons/gr";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // import SummaryApi from '../common';
 // import { toast } from 'react-toastify';
 // import { setUserDetails } from '../store/userSlice';
@@ -12,7 +12,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 // import Context from '../context';
 
 const Header = () => {
-  // const user = useSelector(({ user }) => user.user);
+  const user = useSelector(({ user }) => user.user);
+  console.log("from header; user - ", user)
   // const dispatch = useDispatch();
   // const [menuDisplay, setMenuDisplay] = useState(false);
   // const context = useContext(Context);
@@ -80,20 +81,18 @@ const Header = () => {
 
         <div className="flex items-center gap-7">
           <div className=" relative flex justify-center">
-            {/* {user?._id && ( */}
+            {user?._id && (
             <div
               className="border-blue text-3xl cursor-pointer relative flex justify-center"
               // onClick={() => setMenuDisplay((prev) => !prev)}
             >
-              {/* {user?.profilePic ? (
-                  <img src={user?.profilePic} className='w-10 h-10 rounded-full' alt={user?.name} />
+              {user?.profile ? (
+                  <img src={user?.profile} className='w-10 border-green h-10 rounded-full' alt={user?.name} />
                 ) : (
                   <FaRegCircleUser />
-                )} */}
-
-              <FaRegCircleUser />
+                )}
             </div>
-            {/* )} */}
+            )}
 
             {/* {menuDisplay && (
               <div className='absolute bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded'>

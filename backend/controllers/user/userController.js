@@ -1,6 +1,6 @@
-import UserModel from "../models/User.js";
+import UserModel from "../../models/User.js";
 
-export async function userDetailsController(req,res){
+export async function userDetails(req,res){
     try{
         console.log("userId",req.userId)
         const user = await UserModel.findById(req.userId)

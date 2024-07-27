@@ -9,10 +9,10 @@ const SummaryApi = {
         url : `${backendDomin}/api/login`,
         method : "post"
     },
-    // current_user : {
-    //     url : `${backendDomin}/api/user-details`,
-    //     method : "get"
-    // },
+    current_user : {
+        url : `${backendDomin}/api/user-details`,
+        method : "get"
+    },
     // logout_user : {
     //     url : `${backendDomin}/api/userLogout`,
     //     method : 'get'

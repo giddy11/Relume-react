@@ -62,7 +62,7 @@ export async function register(req, res) {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 1000000000);
     if (!hashedPassword) {
       throw new Error("Something is wrong");
     }
@@ -142,7 +142,7 @@ export async function login(req, res) {
       };
       // const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: 60 * 60 * 8 });
       const token = await jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, {
-        expiresIn: 10,
+        expiresIn: 100,
       });
 
       const tokenOption = {
