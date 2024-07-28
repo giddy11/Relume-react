@@ -35,14 +35,6 @@ const Login = () => {
 
     console.log("clicked");
 
-    // const dataResponse = await fetch(SummaryApi.signIn.url,{
-    //     method : SummaryApi.signIn.method,
-    //     credentials : 'include',
-    //     headers : {
-    //         "content-type" : "application/json"
-    //     },
-    //     body : JSON.stringify(data)
-    // })
     const dataResponse = await axios.post(SummaryApi.signIn.url, data, {
       headers: {
         "Content-Type": "application/json",

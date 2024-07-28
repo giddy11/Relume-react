@@ -170,6 +170,25 @@ export async function login(req, res) {
   }
 }
 
+export async function logout(req,res){
+  try{
+      res.clearCookie("token")
+
+      res.json({
+          message : "Logged out successfully",
+          error : false,
+          success : true,
+          data : []
+      })
+  }catch(err){
+      res.json({
+          message : err.message || err  ,
+          error : true,
+          success : false,
+      })
+  }
+}
+
 /** GET: http://localhost:8080/api/user/example123 */
 export async function getUser(req, res) {
   const { username } = req.params;

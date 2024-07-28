@@ -5,19 +5,20 @@ import { FaRegCircleUser } from "react-icons/fa6";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-// import SummaryApi from '../common';
-// import { toast } from 'react-toastify';
-// import { setUserDetails } from '../store/userSlice';
+import SummaryApi from '../common';
+import axios from "axios";
+import { toast } from 'react-toastify';
+import { setUserDetails } from '../store/userSlice';
 // import ROLE from '../common/role';
 // import Context from '../context';
 
 const Header = () => {
   const user = useSelector(({ user }) => user.user);
   console.log("from header; user - ", user)
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // const [menuDisplay, setMenuDisplay] = useState(false);
   // const context = useContext(Context);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // const location = useLocation();
   // const searchParams = new URLSearchParams(location.search);
   // const initialSearchQuery = searchParams.get("q") || "";
@@ -27,24 +28,31 @@ const Header = () => {
   //   setSearch(initialSearchQuery);
   // }, [initialSearchQuery]);
 
-  // const handleLogout = async () => {
-  //   const fetchData = await fetch(SummaryApi.logout_user.url, {
-  //     method: SummaryApi.logout_user.method,
-  //     credentials: 'include',
-  //   });
+  const handleLogout = async () => {
+    // const fetchData = await fetch(SummaryApi.logout_user.url, {
+    //   method: SummaryApi.logout_user.method,
+    //   credentials: 'include',
+    // });
 
-  //   const data = await fetchData.json();
+    const fetchData = await axios.get(SummaryApi.logout_user.url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true, // Ensure this is set to include credentials
+    });
 
-  //   if (data.success) {
-  //     toast.success(data.message);
-  //     dispatch(setUserDetails(null));
-  //     navigate("/");
-  //   }
+    const data = await fetchData.data;
 
-  //   if (data.error) {
-  //     toast.error(data.message);
-  //   }
-  // };
+    if (data.success) {
+      toast.success(data.message);
+      dispatch(setUserDetails(null));
+      navigate("/");
+    }
+
+    if (data.error) {
+      toast.error(data.message);
+    }
+  };
 
   // const handleSearch = (e) => {
   //   const { value } = e.target;
@@ -129,7 +137,7 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* <div>
+          <div>
             {user?._id ? (
               <button
                 onClick={handleLogout}
@@ -145,9 +153,9 @@ const Header = () => {
                 Login
               </Link>
             )}
-          </div> */}
+          </div>
 
-          <div>
+          {/* <div>
             <Link
               to={"/login"}
               className="px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700"
@@ -157,7 +165,7 @@ const Header = () => {
             <button className="px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700">
               Logout
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>
