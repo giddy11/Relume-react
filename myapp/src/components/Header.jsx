@@ -9,14 +9,15 @@ import SummaryApi from '../common';
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { setUserDetails } from '../store/userSlice';
-// import ROLE from '../common/role';
+import ROLE from '../common/role';
 // import Context from '../context';
 
 const Header = () => {
+  // 3:58:30
   const user = useSelector(({ user }) => user.user);
   console.log("from header; user - ", user)
   const dispatch = useDispatch();
-  // const [menuDisplay, setMenuDisplay] = useState(false);
+  const [menuDisplay, setMenuDisplay] = useState(false);
   // const context = useContext(Context);
   const navigate = useNavigate();
   // const location = useLocation();
@@ -29,11 +30,6 @@ const Header = () => {
   // }, [initialSearchQuery]);
 
   const handleLogout = async () => {
-    // const fetchData = await fetch(SummaryApi.logout_user.url, {
-    //   method: SummaryApi.logout_user.method,
-    //   credentials: 'include',
-    // });
-
     const fetchData = await axios.get(SummaryApi.logout_user.url, {
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +88,7 @@ const Header = () => {
             {user?._id && (
             <div
               className="border-blue text-3xl cursor-pointer relative flex justify-center"
-              // onClick={() => setMenuDisplay((prev) => !prev)}
+              onClick={() => setMenuDisplay((prev) => !prev)}
             >
               {user?.profile ? (
                   <img src={user?.profile} className='w-10 border-green h-10 rounded-full' alt={user?.name} />
@@ -102,10 +98,10 @@ const Header = () => {
             </div>
             )}
 
-            {/* {menuDisplay && (
-              <div className='absolute bg-white bottom-0 top-11 h-fit p-2 shadow-lg rounded'>
+            {menuDisplay && (
+              <div className='absolute border-greenx bg-white bottom-0 top-11 h-fit md:p-2 p-0 shadow-lg rounded'>
                 <nav>
-                  {user?.role === ROLE.ADMIN && (
+                  {user?.role === ROLE.GENERAL && (
                     <Link
                       to={"/admin-panel/all-products"}
                       className='whitespace-nowrap hidden md:block hover:bg-slate-100 p-2'
@@ -116,7 +112,7 @@ const Header = () => {
                   )}
                 </nav>
               </div>
-            )} */}
+            )}
           </div>
 
           {/* {user?._id && (
@@ -154,18 +150,6 @@ const Header = () => {
               </Link>
             )}
           </div>
-
-          {/* <div>
-            <Link
-              to={"/login"}
-              className="px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700"
-            >
-              Login
-            </Link>
-            <button className="px-3 py-1 rounded-full text-white bg-red-600 hover:bg-red-700">
-              Logout
-            </button>
-          </div> */}
         </div>
       </div>
     </header>

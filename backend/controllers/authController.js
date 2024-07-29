@@ -62,13 +62,14 @@ export async function register(req, res) {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 1000000000);
+    const hashedPassword = await bcrypt.hash(password, 10);
     if (!hashedPassword) {
       throw new Error("Something is wrong");
     }
 
     const payload = {
       ...req.body,
+      role : "GENERAL",
       password: hashedPassword,
     };
 
