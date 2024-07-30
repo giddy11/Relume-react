@@ -50,7 +50,7 @@ function App() {
     fetchUserDetails();
     /**user Details cart product */
     // fetchUserAddToCart()
-  }, []);
+  }, [0]);
 
   return (
     <>
@@ -61,7 +61,7 @@ function App() {
           // fetchUserAddToCart,
         }}
       >
-        <ToastContainer position="top-center" />
+        <ToastContainer position="top-center" autoClose={1000} />
 
         <Header />
         <main className="min-h-[calc(100vh-120px)] pt-16">
