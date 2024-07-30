@@ -15,6 +15,12 @@ const AdminPanel = () => {
     //     }
     // },[user])
 
+    useEffect(()=>{
+        if(user?.role !== ROLE.GENERAL){
+            navigate("/")
+        }
+    },[user])
+
   return (
     <div className='min-h-[calc(100vh-120px)] border-red md:flex hidden'>
 

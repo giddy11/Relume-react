@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import SummaryApi from '../common'
 import { toast } from 'react-toastify'
-// import moment from 'moment'
+import moment from 'moment'
 import { MdModeEdit } from "react-icons/md";
-// import ChangeUserRole from '../components/ChangeUserRole';
+import axios from "axios";
+import ChangeUserRole from '../components/ChangeUserRole';
 
 const AllUsers = () => {
     const [allUser,setAllUsers] = useState([])
@@ -16,20 +17,19 @@ const AllUsers = () => {
     })
 
     const fetchAllUsers = async() =>{
-        // const fetchData = await fetch(SummaryApi.allUser.url,{
-        //     method : SummaryApi.allUser.method,
-        //     credentials : 'include'
-        // })
+        const fetchData = await axios.get(SummaryApi.allUser.url, {
+            withCredentials: true, // Ensure this is set to include credentials
+          });
 
-        // const dataResponse = await fetchData.json()
+        const dataResponse = await fetchData.data
 
-        // if(dataResponse.success){
-        //     setAllUsers(dataResponse.data)
-        // }
+        if(dataResponse.success){
+            setAllUsers(dataResponse.data)
+        }
 
-        // if(dataResponse.error){
-        //     toast.error(dataResponse.message)
-        // }
+        if(dataResponse.error){
+            toast.error(dataResponse.message)
+        }
 
     }
 
@@ -59,7 +59,7 @@ const AllUsers = () => {
                                 <td>{el?.name}</td>
                                 <td>{el?.email}</td>
                                 <td>{el?.role}</td>
-                                {/* <td>{moment(el?.createdAt).format('LL')}</td> */}
+                                <td>{moment(el?.createdAt).format('LL')}</td>
                                 <td>
                                     <button className='bg-green-100 p-2 rounded-full cursor-pointer hover:bg-green-500 hover:text-white' 
                                     onClick={()=>{
@@ -78,7 +78,7 @@ const AllUsers = () => {
             </tbody>
         </table>
 
-        {/* {
+        {
             openUpdateRole && (
                 <ChangeUserRole 
                     onClose={()=>setOpenUpdateRole(false)} 
@@ -89,7 +89,7 @@ const AllUsers = () => {
                     callFunc={fetchAllUsers}
                 />
             )      
-        } */}
+        }
     </div>
   )
 }

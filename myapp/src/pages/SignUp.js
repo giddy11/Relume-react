@@ -6,6 +6,7 @@ import imageTobase64 from '../helper/imageTobase64';
 import SummaryApi from '../common';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { validateEmail } from '../helper/validate'; // Import the validateEmail function
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,10 +21,7 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const handleOnChange = (e) => {
-    console.log("clicked")
-
     const { name, value } = e.target;
-
     setData((prev) => ({
       ...prev,
       [name]: value
@@ -31,46 +29,48 @@ const SignUp = () => {
   };
 
   const handleUploadPic = async (e) => {
-    console.log("clicked")
     const file = e.target.files?.[0];
-    console.log(file)
-
     if (file) {
       const imagePic = await imageTobase64(file);
-
       setData((prev) => ({
         ...prev,
-        role:"GENERAL",
+        role: "GENERAL",
         profile: imagePic
       }));
     }
   };
 
   const handleSubmit = async (e) => {
-    console.log("clicked")
     e.preventDefault();
 
-    if (data.password === data.confirmPassword) {
-      try {
-        const response = await axios.post(SummaryApi.signUP.url, data, {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
+    const emailError = validateEmail(data.email);
+    if (emailError) {
+      toast.error(emailError);
+      return;
+    }
 
-        const dataApi = response.data;
-
-        if (dataApi.success) {
-          toast.success(dataApi.message);
-          navigate("/login");
-        } else if (dataApi.error) {
-          toast.error(dataApi.message);
-        }
-      } catch (error) {
-        toast.error("An error occurred while signing up");
-      }
-    } else {
+    if (data.password !== data.confirmPassword) {
       toast.error("Please check password and confirm password");
+      return;
+    }
+
+    try {
+      const response = await axios.post(SummaryApi.signUP.url, data, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      const dataApi = response.data;
+
+      if (dataApi.success) {
+        toast.success(dataApi.message);
+        navigate("/login");
+      } else if (dataApi.error) {
+        toast.error(dataApi.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred while signing up");
     }
   };
 

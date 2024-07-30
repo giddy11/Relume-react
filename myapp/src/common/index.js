@@ -17,14 +17,14 @@ const SummaryApi = {
         url : `${backendDomin}/api/logout`,
         method : 'get'
     },
-    // allUser : {
-    //     url : `${backendDomin}/api/all-user`,
-    //     method : 'get'
-    // },
-    // updateUser : {
-    //     url : `${backendDomin}/api/update-user`,
-    //     method : "post"
-    // },
+    allUser : {
+        url : `${backendDomin}/api/all-user`,
+        method : 'get'
+    },
+    updateUser : {
+        url : `${backendDomin}/api/update-user`,
+        method : "post"
+    },
     // uploadProduct : {
     //     url : `${backendDomin}/api/upload-product`,
     //     method : 'post'
