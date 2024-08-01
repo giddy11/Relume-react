@@ -44,43 +44,6 @@ export async function fetchAllUsers(req,res){
     }
 }
 
-// export async function updateUser(req,res){
-//     try{
-//         const sessionUser = req.userId
-//         console.log("from userController update user: ", sessionUser);
-
-//         const { userId , email, username, role} = req.body
-
-//         const payload = {
-//             ...( email && { email : email}),
-//             ...( username && { username : username}),
-//             ...( role && { role : role}),
-//         }
-
-//         const user = await UserModel.findById(sessionUser)
-
-//         console.log("user.role",user.role)
-
-
-
-//         const updateUser = await UserModel.findByIdAndUpdate(userId,payload)
-
-        
-//         res.json({
-//             data : updateUser,
-//             message : "User Updated",
-//             success : true,
-//             error : false
-//         })
-//     }catch(err){
-//         res.status(400).json({
-//             message : err.message || err,
-//             error : true,
-//             success : false
-//         })
-//     }
-// }
-
 export async function updateUser(req, res) {
     try {
         const sessionUser = req.userId;

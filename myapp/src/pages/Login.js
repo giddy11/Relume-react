@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import loginIcons from "../assest/signin.gif";
-import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import SummaryApi from "../common";
 import { toast } from "react-toastify";
@@ -11,53 +10,47 @@ import Context from '../context';
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
-    email: "giddy@test.com",
-    password: "giddy",
+    email: "henry@test.com",
+    password: "henry",
   });
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { fetchUserDetails, fetchUserAddToCart } = useContext(Context)
+  const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
-
-    setData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+    setData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
-
-  // console.log(`data login details : ${data}`)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    try {
+      const dataResponse = await axios.post(SummaryApi.signIn.url, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
-    console.log("clicked");
+      const dataApi = await dataResponse.data;
 
-    const dataResponse = await axios.post(SummaryApi.signIn.url, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true, // Ensure this is set to include credentials
-    });
-
-    // const dataApi = await dataResponse.json()
-    const dataApi = await dataResponse.data;
-
-    if (dataApi.success) {
-      toast.success(dataApi.message);
-      navigate("/");
-      fetchUserDetails()
-      // fetchUserAddToCart()
-    }
-
-    if (dataApi.error) {
-      toast.error(dataApi.message);
+      if (dataApi.success) {
+        toast.success(dataApi.message);
+        navigate("/");
+        fetchUserDetails();
+      } else if (dataApi.error) {
+        toast.error(dataApi.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  console.log("data login", data);
 
   return (
     <section id="login">
@@ -108,16 +101,20 @@ const Login = () => {
               </Link>
             </div>
 
-            <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 w-full max-w-[150px] rounded-full hover:scale-110 transition-all mx-auto block mt-6">
-              Login
+            <button
+              type="submit"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 w-full max-w-[150px] rounded-full hover:scale-110 transition-all mx-auto block mt-6"
+              disabled={isLoading}
+            >
+              {isLoading ? <div className="spinner"></div> : "Login"}
             </button>
           </form>
 
           <p className="my-5">
-            Don't have account ?{" "}
+            Don't have an account?{" "}
             <Link
               to={"/sign-up"}
-              className=" text-red-600 hover:text-red-700 hover:underline"
+              className="text-red-600 hover:text-red-700 hover:underline"
             >
               Sign up
             </Link>
