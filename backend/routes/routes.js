@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as controller from '../controllers/authController.js';
 import * as userController from '../controllers/user/userController.js';
+import * as productController from '../controllers/product/productController.js';
 import Auth, { localVariables } from '../middleware/auth.js';
 import { registerMail } from '../controllers/mailer.js'
 const router = Router();
@@ -14,6 +15,10 @@ router.route('/login').post(controller.login); // login in app
 
 //admin panel 
 router.route("/update-user").post(Auth,userController.updateUser);
+
+//product
+router.route("/upload-product").post(Auth, productController.UploadProductController);
+
 
 /** GET Methods */
 router.route('/user/:username').get(controller.getUser) // user with username
