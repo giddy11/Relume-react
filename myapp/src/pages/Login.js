@@ -40,6 +40,8 @@ const Login = () => {
 
       if (dataApi.success) {
         toast.success(dataApi.message);
+        localStorage.setItem('token', dataApi.token);
+
         navigate("/");
         fetchUserDetails();
       } else if (dataApi.error) {

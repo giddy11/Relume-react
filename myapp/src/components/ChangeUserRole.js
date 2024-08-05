@@ -39,20 +39,6 @@ const ChangeUserRole = ({
         const responseData = fetchResponse.data;
         console.log('Response data:', responseData);
 
-        // const fetchResponse = await fetch(SummaryApi.updateUser.url,{
-        //     method : SummaryApi.updateUser.method,
-        //     credentials : 'include',
-        //     headers : {
-        //         "content-type" : "application/json"
-        //     },
-        //     body : JSON.stringify({
-        //         userId : userId,
-        //         role : userRole
-        //     })
-        // })
-
-        // const responseData = await fetchResponse.json()
-
         if(responseData.success){
             toast.success(responseData.message)
             onClose()

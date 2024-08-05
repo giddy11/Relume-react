@@ -151,13 +151,19 @@ export async function login(req, res) {
         secure: true,   // The cookie is sent only over HTTPS, ensuring secure transmission
       };
       
-
       res.cookie("token", token, tokenOption).status(200).json({
         message: "Login successfully",
-        data: token,
+        token: token,
         success: true,
         error: false,
       });
+
+      // res.cookie("token", token, tokenOption).status(200).json({
+      //   message: "Login successfully",
+      //   data: token,
+      //   success: true,
+      //   error: false,
+      // });
     } else {
       throw new Error("Please check Password");
     }
